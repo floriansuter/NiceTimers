@@ -6,14 +6,64 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		5CF2805B2E50D28600B76FDD /* WatchNiceTimer Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 5CF280512E50D28300B76FDD /* WatchNiceTimer Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		5CF280612E50D31D00B76FDD /* TimerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CF280602E50D31200B76FDD /* TimerItem.swift */; };
+		5CF280632E50D5C600B76FDD /* TimerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CF280602E50D31200B76FDD /* TimerItem.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5CF280592E50D28600B76FDD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5CF280362E50D0BC00B76FDD /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5CF280502E50D28300B76FDD;
+			remoteInfo = "WatchNiceTimer Watch App";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		5CF2805F2E50D28600B76FDD /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				5CF2805B2E50D28600B76FDD /* WatchNiceTimer Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		5CF2803E2E50D0BC00B76FDD /* NiceTimer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NiceTimer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5CF280512E50D28300B76FDD /* WatchNiceTimer Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WatchNiceTimer Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5CF280602E50D31200B76FDD /* TimerItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerItem.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		5CF280652E50DC8A00B76FDD /* Exceptions for "NiceTimer" folder in "WatchNiceTimer Watch App" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Assets.xcassets,
+			);
+			target = 5CF280502E50D28300B76FDD /* WatchNiceTimer Watch App */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		5CF280402E50D0BC00B76FDD /* NiceTimer */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				5CF280652E50DC8A00B76FDD /* Exceptions for "NiceTimer" folder in "WatchNiceTimer Watch App" target */,
+			);
 			path = NiceTimer;
+			sourceTree = "<group>";
+		};
+		5CF280522E50D28300B76FDD /* WatchNiceTimer Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "WatchNiceTimer Watch App";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -26,13 +76,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5CF2804E2E50D28300B76FDD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		5CF280352E50D0BC00B76FDD = {
 			isa = PBXGroup;
 			children = (
+				5CF280602E50D31200B76FDD /* TimerItem.swift */,
 				5CF280402E50D0BC00B76FDD /* NiceTimer */,
+				5CF280522E50D28300B76FDD /* WatchNiceTimer Watch App */,
 				5CF2803F2E50D0BC00B76FDD /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				5CF2803E2E50D0BC00B76FDD /* NiceTimer.app */,
+				5CF280512E50D28300B76FDD /* WatchNiceTimer Watch App.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -55,10 +115,12 @@
 				5CF2803A2E50D0BC00B76FDD /* Sources */,
 				5CF2803B2E50D0BC00B76FDD /* Frameworks */,
 				5CF2803C2E50D0BC00B76FDD /* Resources */,
+				5CF2805F2E50D28600B76FDD /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				5CF2805A2E50D28600B76FDD /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				5CF280402E50D0BC00B76FDD /* NiceTimer */,
@@ -68,6 +130,28 @@
 			);
 			productName = NiceTimer;
 			productReference = 5CF2803E2E50D0BC00B76FDD /* NiceTimer.app */;
+			productType = "com.apple.product-type.application";
+		};
+		5CF280502E50D28300B76FDD /* WatchNiceTimer Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5CF2805C2E50D28600B76FDD /* Build configuration list for PBXNativeTarget "WatchNiceTimer Watch App" */;
+			buildPhases = (
+				5CF2804D2E50D28300B76FDD /* Sources */,
+				5CF2804E2E50D28300B76FDD /* Frameworks */,
+				5CF2804F2E50D28300B76FDD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				5CF280522E50D28300B76FDD /* WatchNiceTimer Watch App */,
+			);
+			name = "WatchNiceTimer Watch App";
+			packageProductDependencies = (
+			);
+			productName = "WatchNiceTimer Watch App";
+			productReference = 5CF280512E50D28300B76FDD /* WatchNiceTimer Watch App.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -81,6 +165,9 @@
 				LastUpgradeCheck = 1640;
 				TargetAttributes = {
 					5CF2803D2E50D0BC00B76FDD = {
+						CreatedOnToolsVersion = 16.4;
+					};
+					5CF280502E50D28300B76FDD = {
 						CreatedOnToolsVersion = 16.4;
 					};
 				};
@@ -100,12 +187,20 @@
 			projectRoot = "";
 			targets = (
 				5CF2803D2E50D0BC00B76FDD /* NiceTimer */,
+				5CF280502E50D28300B76FDD /* WatchNiceTimer Watch App */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		5CF2803C2E50D0BC00B76FDD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5CF2804F2E50D28300B76FDD /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -119,10 +214,27 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5CF280612E50D31D00B76FDD /* TimerItem.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5CF2804D2E50D28300B76FDD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5CF280632E50D5C600B76FDD /* TimerItem.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5CF2805A2E50D28600B76FDD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5CF280502E50D28300B76FDD /* WatchNiceTimer Watch App */;
+			targetProxy = 5CF280592E50D28600B76FDD /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		5CF280482E50D0BE00B76FDD /* Debug */ = {
@@ -247,8 +359,10 @@
 				CODE_SIGN_ENTITLEMENTS = NiceTimer/NiceTimer.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = CR4UZM27AH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -268,10 +382,11 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = 1;
 				XROS_DEPLOYMENT_TARGET = 2.5;
 			};
 			name = Debug;
@@ -284,8 +399,10 @@
 				CODE_SIGN_ENTITLEMENTS = NiceTimer/NiceTimer.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = CR4UZM27AH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -305,11 +422,75 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = 1;
 				XROS_DEPLOYMENT_TARGET = 2.5;
+			};
+			name = Release;
+		};
+		5CF2805D2E50D28600B76FDD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "WatchNiceTimer Watch App/WatchNiceTimer Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = CR4UZM27AH;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = WatchNiceTimer;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = flodev.NiceTimer;
+				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = flodev.NiceTimer.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.5;
+			};
+			name = Debug;
+		};
+		5CF2805E2E50D28600B76FDD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "WatchNiceTimer Watch App/WatchNiceTimer Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = CR4UZM27AH;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = WatchNiceTimer;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = flodev.NiceTimer;
+				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = flodev.NiceTimer.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 11.5;
 			};
 			name = Release;
 		};
@@ -330,6 +511,15 @@
 			buildConfigurations = (
 				5CF2804B2E50D0BE00B76FDD /* Debug */,
 				5CF2804C2E50D0BE00B76FDD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5CF2805C2E50D28600B76FDD /* Build configuration list for PBXNativeTarget "WatchNiceTimer Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5CF2805D2E50D28600B76FDD /* Debug */,
+				5CF2805E2E50D28600B76FDD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
