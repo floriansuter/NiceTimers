@@ -11,13 +11,13 @@ import SwiftUI
 import WatchKit
 #endif
 
-struct TimerItem: Identifiable, Codable {
+struct TimerItem: Identifiable, Codable, Hashable {
   var id = UUID()
   var name: String
   var duration: Int
 }
 
-struct TimerSequenceData: Identifiable, Codable {
+struct TimerSequenceData: Identifiable, Codable, Hashable {
   var id = UUID()
   var name: String
   var timers: [TimerItem]
@@ -45,10 +45,8 @@ class TimerSequenceManager: ObservableObject {
   
   // Use App Groups for sharing between iOS and Watch
   private var sharedDefaults: UserDefaults {
-    // You'll need to set up an App Group in your project capabilities
-    // For now, we'll use standard UserDefaults
+    // Fall back to standard UserDefaults if app group isn't available
     return UserDefaults(suiteName: "group.flodev.NiceTimers") ?? UserDefaults.standard
-
   }
   
   init() {
@@ -168,9 +166,12 @@ class TimerSequenceManager: ObservableObject {
   private func moveToNextTimer() {
     guard let sequence = currentSequence else { return }
     currentTimerIndex += 1
+    
     if currentTimerIndex < sequence.timers.count {
+      // More timers to go
       remainingTime = sequence.timers[currentTimerIndex].duration
     } else {
+      // Sequence completed
       stop()
       signalSequenceComplete()
     }

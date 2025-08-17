@@ -9,24 +9,38 @@ import SwiftUI
 
 struct ContentView: View {
   @StateObject private var manager = TimerSequenceManager()
-  @State private var showingEditView = false
   @State private var showingNewSequence = false
   @State private var selectedSequence: TimerSequenceData?
   
   var body: some View {
-    NavigationView {
+    NavigationSplitView {
       // Sidebar with sequences
       SequenceSidebarView(manager: manager, selectedSequence: $selectedSequence)
-      
-      // Main content
-      if let sequence = selectedSequence ?? manager.currentSequence {
+    } detail: {
+      // Detail view
+      if let sequence = selectedSequence {
         SequenceDetailView(manager: manager, sequence: sequence)
-      } else {
+      } else if manager.sequences.isEmpty {
         EmptyStateView(showingNewSequence: $showingNewSequence)
+      } else {
+        VStack(spacing: 20) {
+          Image(systemName: "timer")
+            .font(.system(size: 60))
+            .foregroundColor(.secondary)
+          
+          Text("Select a Timer Sequence")
+            .font(.title2)
+            .fontWeight(.semibold)
+          
+          Text("Choose a sequence from the sidebar to view details and start timing")
+            .foregroundColor(.secondary)
+            .multilineTextAlignment(.center)
+        }
+        .padding()
       }
     }
     .sheet(isPresented: $showingNewSequence) {
-      NewSequenceView(manager: manager)
+      NewSequenceView(manager: manager, selectedSequence: $selectedSequence)
     }
   }
 }
@@ -36,24 +50,32 @@ struct SequenceSidebarView: View {
   @Binding var selectedSequence: TimerSequenceData?
   @State private var showingNewSequence = false
   
+  private func isSequenceSelected(_ sequence: TimerSequenceData) -> Bool {
+    if let selected = selectedSequence {
+      return selected.id == sequence.id
+    } else {
+      return manager.currentSequence?.id == sequence.id
+    }
+  }
+  
   var body: some View {
-    List {
+    List(selection: $selectedSequence) {
       Section("Sequences") {
         ForEach(manager.sequences) { sequence in
           SequenceRowView(
             sequence: sequence,
-            isSelected: selectedSequence?.id == sequence.id ||
-                       (selectedSequence == nil && manager.currentSequence?.id == sequence.id),
+            isSelected: isSequenceSelected(sequence),
             manager: manager
           )
-          .onTapGesture {
-            selectedSequence = sequence
-            manager.selectSequence(sequence)
-          }
+          .tag(sequence)
         }
         .onDelete { indexSet in
           indexSet.forEach { index in
-            manager.deleteSequence(manager.sequences[index])
+            let sequenceToDelete = manager.sequences[index]
+            if selectedSequence?.id == sequenceToDelete.id {
+              selectedSequence = nil
+            }
+            manager.deleteSequence(sequenceToDelete)
           }
         }
       }
@@ -67,7 +89,13 @@ struct SequenceSidebarView: View {
       }
     }
     .sheet(isPresented: $showingNewSequence) {
-      NewSequenceView(manager: manager)
+      NewSequenceView(manager: manager, selectedSequence: $selectedSequence)
+    }
+    .onAppear {
+      // Set initial selection if none exists
+      if selectedSequence == nil && !manager.sequences.isEmpty {
+        selectedSequence = manager.currentSequence ?? manager.sequences.first
+      }
     }
   }
 }
@@ -138,22 +166,30 @@ struct SequenceDetailView: View {
       // Sequence content
       List {
         Section {
-          ForEach(Array(sequence.timers.enumerated()), id: \.element.id) { index, timer in
-            TimerRowView(
-              timer: timer,
-              index: index,
-              isActive: manager.currentSequence?.id == sequence.id &&
-                       manager.isRunning &&
-                       manager.currentTimerIndex == index
-            )
+          if sequence.timers.isEmpty {
+            Text("No timers added yet")
+              .foregroundColor(.secondary)
+              .italic()
+          } else {
+            ForEach(Array(sequence.timers.enumerated()), id: \.element.id) { index, timer in
+              TimerRowView(
+                timer: timer,
+                index: index,
+                isActive: manager.currentSequence?.id == sequence.id &&
+                         manager.isRunning &&
+                         manager.currentTimerIndex == index
+              )
+            }
           }
         } header: {
           HStack {
             Text("Timers")
             Spacer()
-            Text("Total: \(formatTotalTime(sequence.timers.reduce(0) { $0 + $1.duration }))")
-              .font(.caption)
-              .foregroundColor(.secondary)
+            if !sequence.timers.isEmpty {
+              Text("Total: \(formatTotalTime(sequence.timers.reduce(0) { $0 + $1.duration }))")
+                .font(.caption)
+                .foregroundColor(.secondary)
+            }
           }
         }
       }
@@ -241,8 +277,11 @@ struct RunningTimerView: View {
   
   var body: some View {
     VStack(spacing: 20) {
-      if let sequence = manager.currentSequence {
-        Text(sequence.timers[manager.currentTimerIndex].name)
+      if let sequence = manager.currentSequence,
+         manager.currentTimerIndex < sequence.timers.count {
+        let currentTimer = sequence.timers[manager.currentTimerIndex]
+        
+        Text(currentTimer.name)
           .font(.title2)
           .fontWeight(.semibold)
         
@@ -257,7 +296,7 @@ struct RunningTimerView: View {
           Circle()
             .trim(
               from: 0,
-              to: CGFloat(manager.remainingTime) / CGFloat(sequence.timers[manager.currentTimerIndex].duration)
+              to: CGFloat(manager.remainingTime) / CGFloat(currentTimer.duration)
             )
             .stroke(Color.accentColor, lineWidth: 10)
             .rotationEffect(.degrees(-90))
@@ -270,6 +309,11 @@ struct RunningTimerView: View {
             .font(.caption)
             .foregroundColor(.secondary)
         }
+      } else {
+        Text("Timer Sequence Complete!")
+          .font(.title2)
+          .fontWeight(.semibold)
+          .foregroundColor(.green)
       }
     }
     .padding()
@@ -333,28 +377,34 @@ struct EditSequenceView: View {
         }
         
         Section("Timers") {
-          ForEach(Array(editingSequence.timers.enumerated()), id: \.element.id) { index, timer in
-            NavigationLink(destination: EditTimerView(timer: $editingSequence.timers[index])) {
-              HStack {
-                Text("\(index + 1)")
-                  .font(.caption)
-                  .foregroundColor(.secondary)
-                  .frame(width: 20)
-                
-                Text(timer.name)
-                
-                Spacer()
-                
-                Text(formatTime(timer.duration))
-                  .foregroundColor(.secondary)
+          if editingSequence.timers.isEmpty {
+            Text("No timers added yet")
+              .foregroundColor(.secondary)
+              .italic()
+          } else {
+            ForEach(Array(editingSequence.timers.enumerated()), id: \.element.id) { index, timer in
+              NavigationLink(destination: EditTimerView(timer: $editingSequence.timers[index])) {
+                HStack {
+                  Text("\(index + 1)")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .frame(width: 20)
+                  
+                  Text(timer.name)
+                  
+                  Spacer()
+                  
+                  Text(formatTime(timer.duration))
+                    .foregroundColor(.secondary)
+                }
               }
             }
-          }
-          .onDelete { indexSet in
-            editingSequence.timers.remove(atOffsets: indexSet)
-          }
-          .onMove { source, destination in
-            editingSequence.timers.move(fromOffsets: source, toOffset: destination)
+            .onDelete { indexSet in
+              editingSequence.timers.remove(atOffsets: indexSet)
+            }
+            .onMove { source, destination in
+              editingSequence.timers.move(fromOffsets: source, toOffset: destination)
+            }
           }
           
           Button(action: { showingAddTimer = true }) {
@@ -397,14 +447,22 @@ struct EditTimerView: View {
   @Binding var timer: TimerItem
   @Environment(\.dismiss) var dismiss
   
-  @State private var minutes: Int
-  @State private var seconds: Int
+  @State private var hours = 0
+  @State private var minutes = 0
+  @State private var seconds = 0
   
   init(timer: Binding<TimerItem>) {
     self._timer = timer
-    let totalSeconds = timer.wrappedValue.duration
-    self._minutes = State(initialValue: totalSeconds / 60)
-    self._seconds = State(initialValue: totalSeconds % 60)
+
+    let duration = timer.wrappedValue.duration
+    
+    let hours = duration / 3600
+    let minutes = (duration % 3600) / 60
+    let seconds = duration % 60
+    
+    self._hours = State(initialValue: hours)
+    self._minutes = State(initialValue: minutes)
+    self._seconds = State(initialValue: seconds)
   }
   
   var body: some View {
@@ -414,23 +472,50 @@ struct EditTimerView: View {
       }
       
       Section("Duration") {
-        Picker("Minutes", selection: $minutes) {
-          ForEach(0..<100) { min in
-            Text("\(min) min").tag(min)
+        HStack(spacing: 0) {
+          Picker("Hours", selection: $hours) {
+            ForEach(0..<24) { hour in
+              Text("\(hour)")
+                .tag(hour)
+            }
           }
-        }
-        
-        Picker("Seconds", selection: $seconds) {
-          ForEach(0..<60) { sec in
-            Text("\(sec) sec").tag(sec)
+          .pickerStyle(.wheel)
+          .frame(maxWidth: .infinity)
+          
+          Text("h")
+            .foregroundColor(.secondary)
+          
+          Picker("Minutes", selection: $minutes) {
+            ForEach(0..<60) { minute in
+              Text(String(format: "%02d", minute))
+                .tag(minute)
+            }
           }
+          .pickerStyle(.wheel)
+          .frame(maxWidth: .infinity)
+          
+          Text("m")
+            .foregroundColor(.secondary)
+          
+          Picker("Seconds", selection: $seconds) {
+            ForEach(0..<60) { second in
+              Text(String(format: "%02d", second))
+                .tag(second)
+            }
+          }
+          .pickerStyle(.wheel)
+          .frame(maxWidth: .infinity)
+          
+          Text("s")
+            .foregroundColor(.secondary)
         }
+        .labelsHidden()
       }
     }
     .navigationTitle("Edit Timer")
     .navigationBarTitleDisplayMode(.inline)
     .onDisappear {
-      timer.duration = (minutes * 60) + seconds
+      timer.duration = hours * 3600 + minutes * 60 + seconds
     }
   }
 }
@@ -440,6 +525,7 @@ struct AddTimerView: View {
   @Environment(\.dismiss) var dismiss
   
   @State private var name = ""
+  @State private var hours = 0
   @State private var minutes = 0
   @State private var seconds = 30
   
@@ -451,17 +537,44 @@ struct AddTimerView: View {
         }
         
         Section("Duration") {
-          Picker("Minutes", selection: $minutes) {
-            ForEach(0..<100) { min in
-              Text("\(min) min").tag(min)
+          HStack(spacing: 0) {
+            Picker("Hours", selection: $hours) {
+              ForEach(0..<24) { hour in
+                Text("\(hour)")
+                  .tag(hour)
+              }
             }
-          }
-          
-          Picker("Seconds", selection: $seconds) {
-            ForEach(0..<60) { sec in
-              Text("\(sec) sec").tag(sec)
+            .pickerStyle(.wheel)
+            .frame(maxWidth: .infinity)
+            
+            Text("h")
+              .foregroundColor(.secondary)
+            
+            Picker("Minutes", selection: $minutes) {
+              ForEach(0..<60) { minute in
+                Text(String(format: "%02d", minute))
+                  .tag(minute)
+              }
             }
+            .pickerStyle(.wheel)
+            .frame(maxWidth: .infinity)
+            
+            Text("m")
+              .foregroundColor(.secondary)
+            
+            Picker("Seconds", selection: $seconds) {
+              ForEach(0..<60) { second in
+                Text(String(format: "%02d", second))
+                  .tag(second)
+              }
+            }
+            .pickerStyle(.wheel)
+            .frame(maxWidth: .infinity)
+            
+            Text("s")
+              .foregroundColor(.secondary)
           }
+          .labelsHidden()
         }
       }
       .navigationTitle("Add Timer")
@@ -473,15 +586,15 @@ struct AddTimerView: View {
         
         ToolbarItem(placement: .confirmationAction) {
           Button("Add") {
-            let duration = (minutes * 60) + seconds
+            let totalSeconds = hours * 3600 + minutes * 60 + seconds
             let timer = TimerItem(
               name: name.isEmpty ? "Timer" : name,
-              duration: duration
+              duration: totalSeconds
             )
             sequence.timers.append(timer)
             dismiss()
           }
-          .disabled(minutes == 0 && seconds == 0)
+          .disabled(hours == 0 && minutes == 0 && seconds == 0)
         }
       }
     }
@@ -490,14 +603,50 @@ struct AddTimerView: View {
 
 struct NewSequenceView: View {
   @ObservedObject var manager: TimerSequenceManager
+  @Binding var selectedSequence: TimerSequenceData?
   @Environment(\.dismiss) var dismiss
-  @State private var name = ""
+  @State private var editingSequence = TimerSequenceData(name: "", timers: [])
+  @State private var showingAddTimer = false
   
   var body: some View {
     NavigationView {
       Form {
         Section("Sequence Name") {
-          TextField("Name", text: $name)
+          TextField("Name", text: $editingSequence.name)
+        }
+        
+        Section("Timers") {
+          if editingSequence.timers.isEmpty {
+            Text("No timers added yet")
+              .foregroundColor(.secondary)
+              .italic()
+          } else {
+            ForEach(Array(editingSequence.timers.enumerated()), id: \.element.id) { index, timer in
+              HStack {
+                Text("\(index + 1)")
+                  .font(.caption)
+                  .foregroundColor(.secondary)
+                  .frame(width: 20)
+                
+                Text(timer.name)
+                
+                Spacer()
+                
+                Text(formatTime(timer.duration))
+                  .foregroundColor(.secondary)
+              }
+            }
+            .onDelete { indexSet in
+              editingSequence.timers.remove(atOffsets: indexSet)
+            }
+            .onMove { source, destination in
+              editingSequence.timers.move(fromOffsets: source, toOffset: destination)
+            }
+          }
+          
+          Button(action: { showingAddTimer = true }) {
+            Label("Add Timer", systemImage: "plus.circle.fill")
+          }
         }
       }
       .navigationTitle("New Sequence")
@@ -509,15 +658,31 @@ struct NewSequenceView: View {
         
         ToolbarItem(placement: .confirmationAction) {
           Button("Create") {
-            if !name.isEmpty {
-              _ = manager.addSequence(name: name)
+            if !editingSequence.name.isEmpty {
+              editingSequence.id = UUID() // Ensure unique ID
+              manager.sequences.append(editingSequence)
+              manager.selectSequence(editingSequence)
+              selectedSequence = editingSequence
               dismiss()
             }
           }
-          .disabled(name.isEmpty)
+          .disabled(editingSequence.name.isEmpty)
+        }
+        
+        ToolbarItem(placement: .principal) {
+          EditButton()
         }
       }
+      .sheet(isPresented: $showingAddTimer) {
+        AddTimerView(sequence: $editingSequence)
+      }
     }
+  }
+  
+  func formatTime(_ seconds: Int) -> String {
+    let mins = seconds / 60
+    let secs = seconds % 60
+    return String(format: "%02d:%02d", mins, secs)
   }
 }
 
